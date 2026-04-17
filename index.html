@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jangan Klik Tombolnya!</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .warning-text {
+      color: #c0392b;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    h1 {
+      color: #e8e8e8;
+      font-size: clamp(24px, 5vw, 42px);
+      text-align: center;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .sub {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 48px;
+      font-style: italic;
+    }
+
+    #btn {
+      background: transparent;
+      border: 1.5px solid #c0392b;
+      color: #c0392b;
+      padding: 16px 48px;
+      font-size: 18px;
+      font-family: inherit;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.1s;
+      border-radius: 4px;
+    }
+
+    #btn:hover {
+      background: #c0392b;
+      color: #fff;
+    }
+
+    #btn:active {
+      transform: scale(0.97);
+    }
+
+    #countdown {
+      color: #444;
+      font-size: 12px;
+      margin-top: 24px;
+      letter-spacing: 1px;
+      min-height: 18px;
+    }
+
+    /* ───── OVERLAY JUMPSCARE ───── */
+    #scare {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      animation: flashbang 0.08s ease;
+    }
+
+    #scare.active {
+      display: flex;
+    }
+
+    @keyframes flashbang {
+      0%   { opacity: 0; }
+      50%  { opacity: 1; }
+      100% { opacity: 1; }
+    }
+
+    #scare img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: shake 0.35s infinite;
+    }
+
+    /* Jika tidak ada gambar, tampilkan teks raksasa merah */
+    #scare-fallback {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      animation: colorFlash 0.15s infinite;
+    }
+
+    #scare-fallback .face {
+      font-size: clamp(80px, 25vw, 220px);
+      line-height: 1;
+      filter: saturate(0) brightness(2);
+      animation: shake 0.2s infinite;
+    }
+
+    #scare-fallback .scream-text {
+      color: #ff0000;
+      font-size: clamp(36px, 8vw, 80px);
+      font-weight: 900;
+      font-family: Impact, sans-serif;
+      letter-spacing: 6px;
+      animation: shake 0.15s infinite;
+      text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+    }
+
+    @keyframes shake {
+      0%   { transform: translate(-4px, -3px) rotate(-1deg); }
+      25%  { transform: translate(5px,  4px) rotate(1.5deg); }
+      50%  { transform: translate(-6px, 2px) rotate(-2deg); }
+      75%  { transform: translate(4px, -5px) rotate(1deg); }
+      100% { transform: translate(-3px, 4px) rotate(-0.5deg); }
+    }
+
+    @keyframes colorFlash {
+      0%   { background: #000; }
+      50%  { background: #1a0000; }
+      100% { background: #000; }
+    }
+
+    /* ───── RESET BUTTON ───── */
+    #reset {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      display: none;
+      z-index: 1000;
+      letter-spacing: 1px;
+    }
+
+    #reset:hover { background: rgba(255,255,255,0.3); }
+
+    /* ───── SCREEN SHAKE ───── */
+    body.page-shake {
+      animation: pageShake 0.4s ease;
+    }
+
+    @keyframes pageShake {
+      0%   { transform: translate(0,0); }
+      15%  { transform: translate(-10px, 5px); }
+      30%  { transform: translate(12px, -7px); }
+      45%  { transform: translate(-8px, 10px); }
+      60%  { transform: translate(10px, -4px); }
+      75%  { transform: translate(-6px, 8px); }
+      100% { transform: translate(0,0); }
+    }
+  </style>
+</head>
+<body>
+
+  <p class="warning-text">⚠ Peringatan ⚠</p>
+  <h1>Jangan Klik<br>Tombol Ini</h1>
+  <p class="sub">serius. jangan.</p>
+
+  <button id="btn" onclick="startScare()">KLIK AKU</button>
+  <p id="countdown"></p>
+
+  <!-- OVERLAY -->
+  <div id="scare">
+    <!-- Ganti src di bawah dengan URL gambar seram pilihanmu! -->
+    <!-- Contoh: <img src="jumpscare.jpg" alt="BOO" onerror="showFallback()"> -->
+    <div id="scare-fallback">
+      <div class="face">😱</div>
+      <div class="scream-text">BOOOO!!!</div>
+    </div>
+  </div>
+
+  <button id="reset" onclick="resetPage()">✕ Tutup</button>
+
+  <audio id="scream-audio" preload="auto">
+    <!-- Taruh file audio kamu di sini jika ada -->
+    <!-- <source src="scream.mp3" type="audio/mpeg"> -->
+  </audio>
+
+  <script>
+    let countdownTimer = null;
+    let scareTimeout  = null;
+
+    function startScare() {
+      const btn = document.getElementById('btn');
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      btn.style.cursor  = 'not-allowed';
+
+      let count = 3;
+      const cd  = document.getElementById('countdown');
+      cd.textContent = `bersiap... ${count}`;
+
+      countdownTimer = setInterval(() => {
+        count--;
+        if (count > 0) {
+          cd.textContent = `bersiap... ${count}`;
+        } else {
+          clearInterval(countdownTimer);
+          cd.textContent = '';
+          triggerScare();
+        }
+      }, 800);
+    }
+
+    function triggerScare() {
+      document.body.classList.add('page-shake');
+      setTimeout(() => document.body.classList.remove('page-shake'), 400);
+
+      /* Coba mainkan audio jika ada */
+      const audio = document.getElementById('scream-audio');
+      if (audio.src && audio.src !== window.location.href) {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      } else {
+        /* Web Audio API fallback — suara putih singkat */
+        try {
+          const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+          const buf  = ctx.createBuffer(1, ctx.sampleRate * 0.8, ctx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+          const src  = ctx.createBufferSource();
+          src.buffer = buf;
+          src.connect(ctx.destination);
+          src.start();
+        } catch(e) {}
+      }
+
+      showFallback();
+      document.getElementById('scare').classList.add('active');
+      document.getElementById('reset').style.display = 'block';
+
+      /* Auto-close setelah 4 detik */
+      scareTimeout = setTimeout(resetPage, 4000);
+    }
+
+    function showFallback() {
+      document.getElementById('scare-fallback').style.display = 'flex';
+    }
+
+    function resetPage() {
+      clearTimeout(scareTimeout);
+      document.getElementById('scare').classList.remove('active');
+      document.getElementById('scare-fallback').style.display = 'none';
+      document.getElementById('reset').style.display = 'none';
+
+      const btn = document.getElementById('btn');
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor  = 'pointer';
+    }
+  </script>
+</body>
+</html>
